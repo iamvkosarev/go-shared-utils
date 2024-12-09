@@ -1,3 +1,3 @@
-module github.com/iamvkosarev/shared-utils
+module github.com/iamvkosarev/
 
 go 1.23.2
