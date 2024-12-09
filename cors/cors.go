@@ -6,19 +6,15 @@ import (
 
 type MethodType string
 
-const (
-	METHOD_POST = MethodType("POST")
-)
-
 type CORS struct {
 	allowedOrigins []string
 }
 
-func NewCORS(allowedOrigins []string) CORS {
-	return CORS{allowedOrigins: allowedOrigins}
+func NewCORS(allowedOrigins []string) *CORS {
+	return &CORS{allowedOrigins: allowedOrigins}
 }
 
-func (c *CORS) EnableCORS(next http.Handler, methods []MethodType) http.Handler {
+func (c *CORS) EnableCORS(next http.Handler, methods []string) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			origin := r.Header.Get("Origin")
@@ -42,10 +38,10 @@ func (c *CORS) EnableCORS(next http.Handler, methods []MethodType) http.Handler 
 	)
 }
 
-func methodsToString(methods []MethodType) string {
+func methodsToString(methods []string) string {
 	res := ""
 	for _, method := range methods {
-		res += string(method)
+		res += method
 	}
 	return res
 }
