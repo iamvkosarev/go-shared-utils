@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	envLocal = "local"
-	envDev   = "dev"
-	envProd  = "prod"
+	EnvLocal = "local"
+	EnvDev   = "dev"
+	EnvProd  = "prod"
 )
 
 var ErrorWrongEnv = errors.New("select one of available envs: local, dev, prod")
@@ -18,11 +18,11 @@ func SetupLogger(env string) (*slog.Logger, error) {
 	var logger *slog.Logger
 
 	switch env {
-	case envLocal:
+	case EnvLocal:
 		logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-	case envDev:
+	case EnvDev:
 		logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-	case envProd:
+	case EnvProd:
 		logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	}
 	if logger == nil {
