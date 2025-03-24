@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func Auth(log *slog.Logger, ssoURL string) func(http.Handler) http.Handler {
+func Auth(log *slog.Logger, verifyURL string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +22,7 @@ func Auth(log *slog.Logger, ssoURL string) func(http.Handler) http.Handler {
 					slog.String("request_id", middleware.GetReqID(r.Context())),
 				)
 
-				req, err := http.NewRequest(http.MethodPost, ssoURL+"/verify", nil)
+				req, err := http.NewRequest(http.MethodGet, verifyURL, nil)
 				if err != nil {
 					w.WriteHeader(http.StatusBadRequest)
 				}
@@ -32,7 +32,12 @@ func Auth(log *slog.Logger, ssoURL string) func(http.Handler) http.Handler {
 					cookie, err := r.Cookie("jwt")
 					if err != nil {
 						log.Error("missing token", sl.Err(err))
-						render.JSON(w, r, resp.Error("missing token"))
+						render.JSON(
+							w, r, resp.Error(
+								"missing token. header (\"Authorization\") or cookie ("+
+									"\"jwt\") must contain token",
+							),
+						)
 						return
 					}
 					req.AddCookie(cookie)
